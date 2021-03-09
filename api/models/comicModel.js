@@ -30,11 +30,3 @@ const ComicsSchema = new Schema({
 });
 
 module.exports = mongoose.model("Comics", ComicsSchema);
-
-{
-  title: '呪術廻戦',
-  chapterOrg: '呪術廻戦 - Raw 【第141話】',
-  chapterNo: '141',
-  chapterUrl: 'https://manga1000.com/%e3%80%90%e7%ac%ac141%e8%a9%b1%e3%80%91%e5%91%aa%e8%a1%93%e5%bb%bb%e6%88%a6-raw/',
-  detailUrl: 'https://manga1000.com/%e5%91%aa%e8%a1%93%e5%bb%bb%e6%88%a6-raw-free1/'
-}
