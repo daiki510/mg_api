@@ -1,16 +1,19 @@
-const express = require('express');
-const app = express();
-const port = 3001;
+const express = require("express")
+const app = express()
+const port = process.env.PORT || 3001
+const mongoose = require("mongoose")
+const Comic = require("./models/comicModel")
+const routes = require("./routes/comicRoutes"); // Routeのインポート
+const bodyParser = require("body-parser");
 
-app.get('/api/v1/comics', (req, res) => {
-  const todoList = [
-      { title: 'JavaScriptを勉強する', done: true },
-      { title: 'Node.jsを勉強する', done: false },
-      { title: 'Web APIを作る', done: false }
-  ];
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://localhost/Comicdb");
 
-  // JSONを送信する
-  res.json(todoList);
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.listen(port, () => console.log(`listening on port ${port}！！`))
+routes(app); //appにRouteを設定する。
+
+app.listen(port); // appを特定のportでlistenさせる。
+
+console.log("API server started on: " + port);

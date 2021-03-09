@@ -5,7 +5,6 @@ const ComicsSchema = new Schema({
   title: {
     type: String,
     required: true,
-    unique: true
   },
   chapter_no: {
     type: Number,
