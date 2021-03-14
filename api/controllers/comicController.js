@@ -10,25 +10,16 @@ const Comic = mongoose.model('Comics');
 
 //Index
 //TODO:各コミックの最新話一覧を取得する
+//リンク付きで返すようにする
 exports.all_comics = (req, res) => {
-  let selectedComics = [];
   Comic.find({}, (err, comics) => {
     if (err) res.send(err);
-    let set = new Set(comics.map(comic => { return comic.title; }));
-    console.log(set)
+    let set = new Set(comics.map(comic => { return `${comic.title}: ${comic.chapter_no}`; }));
     selectedComics = Array.from(set);
+    console.log(selectedComics)
+    res.send(selectedComics);
+    
   });
-  console.log("=====================")
-  console.log(selectedComics)
-  selectedComics.map(comic => {
-    Comic.find({title: comic.title})
-          .sort( { chapter_no: -1 } )
-          .limit(1, (err, comic) => {
-      if (err) res.send(err);
-      return comic;
-    });
-  })
-  res.send(selectedComics);
 };
 
 exports.create_comic = (req, res) => {
