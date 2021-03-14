@@ -1,35 +1,48 @@
 const mongoose = require('mongoose');
 const Comic = mongoose.model('Comics');
 
+//TODO:必要なAPI
+// - 各コミックの最新話一覧を取得
+// - 新規チャプター登録
+// - 各コミックの全チャプター取得
+// - 特定のコミックの最新話取得
+// - 特定のコミックの全チャプター取得
+
 //Index
+//TODO:各コミックの最新話一覧を取得する
 exports.all_comics = (req, res) => {
-  Comic.find({}, (err, comic) => {
+  let selectedComics = [];
+  Comic.find({}, (err, comics) => {
     if (err) res.send(err);
-    res.json(comic);
+    let set = new Set(comics.map(comic => { return comic.title; }));
+    console.log(set)
+    selectedComics = Array.from(set);
   });
+  console.log("=====================")
+  console.log(selectedComics)
+  selectedComics.map(comic => {
+    Comic.find({title: comic.title})
+          .sort( { chapter_no: -1 } )
+          .limit(1, (err, comic) => {
+      if (err) res.send(err);
+      return comic;
+    });
+  })
+  res.send(selectedComics);
 };
 
-//TODO:同じタイトルの場合はチャプターNoだけ更新するようにする
-//Create
-// exports.create_comic = (req, res) => {
-//   Comic.update(
-//     { title: req.body.title },
-//     { $set: { chapter_no: req.body.chapter_no } },
-//     function(err) {
-//       if (err) throw err;
-//     }
-//   );
-// };
 exports.create_comic = (req, res) => {
-  comic = Comic.findOne({title: req.body.title})
-  console.log(comic.methods);
   const new_comic = new Comic(req.body);
-  new_comic.save((err, comic) => {
-    if (err) res.send(err);
-    res.json(comic);
+  Comic.findOne({title: req.body.title}, function(err, result) {
+    if (!result || req.body.chapter_no > result.chapter_no) {
+      new_comic.save((err, comic) => {
+        if (err) res.send(err);
+        //TODO:レスポンスの構成を考える
+        res.json({"message": "new chapter created"});
+      });
+    } else {
+      //TODO:レスポンスの構成を考える
+      res.send({"message": "not latest"});
+    }
   });
 };
-
-// const checkDupulication = (req.body) => {
-//   comics = Comic.find({title: req.title})
-// };
