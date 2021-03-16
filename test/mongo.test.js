@@ -1,18 +1,23 @@
-const {MongoClient} = require('mongodb');
+// const {MongoClient} = require('mongodb');
+const mongoose = require('mongoose');
+const databaseName = 'Testdb';
+
 
 describe('insert', () => {
+  let con;
   let connection;
   let db;
 
   beforeAll(async () => {
-    connection = await MongoClient.connect("mongodb://localhost/", {
-      useNewUrlParser: true,
-    });
-    db = await connection.db("Testdb");
+    const url = `mongodb://localhost/${databaseName}`
+    con = await mongoose.connect(url, { useNewUrlParser: true })
+    connection = await con.connection
+    db = await connection.db
   });
 
   afterAll(async () => {
-    await connection.close();
+    await db.dropDatabase();
+    await con.close();
     await db.close();
   });
 
@@ -20,7 +25,7 @@ describe('insert', () => {
     const comics = db.collection('comics');
 
     const mockComic = {
-      "_id": "some-comic-id",
+      "_id": "test6-id",
       "title": "テストコミック",
       "chapter_org": "テストコミック - Raw 【第1話】",
       "chapter_no": "1",
@@ -29,7 +34,7 @@ describe('insert', () => {
     };
     await comics.insertOne(mockComic);
 
-    const insertedComic = await comics.findOne({_id: 'some-comic-id'});
+    const insertedComic = await comics.findOne({_id: 'test6-id'});
     expect(insertedComic).toEqual(mockComic);
     expect(insertedComic.title).toEqual(mockComic.title);
   });
