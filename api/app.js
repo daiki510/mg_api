@@ -17,3 +17,5 @@ routes(app); //appにRouteを設定する。
 app.listen(port); // appを特定のportでlistenさせる。
 
 console.log("API server started on: " + port);
+
+// export default app
