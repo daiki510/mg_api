@@ -5,14 +5,12 @@ const databaseName = 'Testdb';
 
 describe('insert', () => {
   let con;
-  let connection;
   let db;
 
   beforeAll(async () => {
     const url = `mongodb://localhost/${databaseName}`
     con = await mongoose.connect(url, { useNewUrlParser: true })
-    connection = await con.connection
-    db = await connection.db
+    db = await con.connection.db
   });
 
   afterAll(async () => {

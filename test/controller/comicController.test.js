@@ -1,10 +1,24 @@
+const {MongoClient} = require('mongodb');
 const comicController = require('../../api/controllers/comicController');
-const mongoose = require('mongoose');
-const comic = mongoose.model('Comics');
 
 //TODO:modelを使用できるようにする
 describe('api/cotrollers/comicController', () => {
   test('post', async () => {
+    let connection;
+    let db;
+
+    beforeAll(async () => {
+      connection = await MongoClient.connect("mongodb://localhost/", {
+        useNewUrlParser: true,
+      });
+      db = await connection.db("Testdb");
+    });
+
+    afterAll(async () => {
+      await connection.close();
+      await db.close();
+    });
+
     const req = {
       body: {
         "title": "テストコミック",
@@ -22,12 +36,12 @@ describe('api/cotrollers/comicController', () => {
     }
     const next = jest.fn()
 
-    jest.mock('../../api/models/comic', () => ({
-      create: jest.fn((comic) => {
-        const title = '12345'
-        return Promise.resolve({ title, ...comic })
-      })
-    }))
+    // jest.mock('../../api/models/comic', () => ({
+    //   create: jest.fn((comic) => {
+    //     const title = '12345'
+    //     return Promise.resolve({ title, ...comic })
+    //   })
+    // }))
 
     await comicController.create_comic(req, res, next)
     console.log(res)

@@ -27,13 +27,39 @@ exports.create_comic = (req, res) => {
   Comic.findOne({title: req.body.title}, function(err, result) {
     if (!result || req.body.chapter_no > result.chapter_no) {
       new_comic.save((err, comic) => {
-        if (err) res.send(err);
-        //TODO:レスポンスの構成を考える
-        res.json({"message": "new chapter created"});
+        if (err) res.json(responseJson(500, comic, err));
+        res.json(responseJson(201, comic, err));
       });
     } else {
-      //TODO:レスポンスの構成を考える
-      res.send({"message": "not latest"});
+      res.send(responseJson(304, req.body, err));
     }
   });
 };
+
+const responseJson = (code, comic = null, err) => {
+  let message
+  switch (code) {
+    case 201: {
+      message = "new chapter created"
+      break
+    }
+    case 304: {
+      message = "not latest, not created"
+      break
+    }
+    case 500: {
+      message = "request failed"
+      break
+    }
+  }
+  return {
+    "status": code,
+    "data": {
+      "title": comic?.title,
+      "chapter_no": comic?.chapter_no
+    },
+    "message": message,
+    "error": err ?? ""
+  }
+}
+
