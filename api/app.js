@@ -5,11 +5,16 @@ const mongoose = require("mongoose")
 const Comic = require("./models/comicModel")
 const routes = require("./routes/comicRoutes"); // Routeのインポート
 const bodyParser = require("body-parser");
+const connectOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost/Comicdb");
+mongoose.connect("mongodb://localhost:27017/Comicdb", connectOptions);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+//TODO:bodyParserが正常に動作しないためにjsonを読み取れない
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 routes(app); //appにRouteを設定する。

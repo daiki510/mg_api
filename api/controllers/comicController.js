@@ -23,15 +23,18 @@ exports.all_comics = (req, res) => {
 };
 
 exports.create_comic = (req, res) => {
+  console.log('============create_comic=================');
+  console.log(req.body.title);
   const new_comic = new Comic(req.body);
   Comic.findOne({title: req.body.title}, function(err, result) {
+    console.log(result)
     if (!result || req.body.chapter_no > result.chapter_no) {
       new_comic.save((err, comic) => {
-        if (err) res.json(responseJson(500, comic, err));
-        res.json(responseJson(201, comic, err));
+        if (err) return res.json(responseJson(500, comic, err));
+        return res.json(responseJson(201, comic, err));
       });
     } else {
-      res.send(responseJson(304, req.body, err));
+      return res.send(responseJson(304, req.body, err));
     }
   });
 };
